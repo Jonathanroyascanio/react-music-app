@@ -24,9 +24,8 @@ function Register() {
         },
       });
       const result = await response.json(); 
+      // if result is not 200 then we know email does not exist
       if (!result.ok) {
-        setErrorMessage('The email already exists');
-      } else {
         // Post registration data
         const registerResponse = await fetch('https://oko2sanpil.execute-api.us-east-1.amazonaws.com/test/login', {
           method: 'POST',
@@ -40,6 +39,9 @@ function Register() {
         } else {
           throw new Error('Registration failed');
         }
+      } else if (result.ok) {
+        setErrorMessage('Email already exists');
+        
       }
     } catch (error) {
       console.error('Error during registration:', error);
