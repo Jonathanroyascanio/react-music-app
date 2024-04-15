@@ -38,7 +38,7 @@ function Register() {
         } else {
           throw new Error('Registration failed');
         }
-      } else if(response.status === 200) {
+      } else if(response.status === 200 || response.status === 401) {
         setErrorMessage('Email already exists');
         
       }
