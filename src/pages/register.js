@@ -24,7 +24,7 @@ function Register() {
         },
       });
       const result = await response.json(); 
-      if (result.ok) {
+      if (!result.ok) {
         setErrorMessage('The email already exists');
       } else {
         // Post registration data
