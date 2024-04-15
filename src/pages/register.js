@@ -11,21 +11,20 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
+    const queryParams = new URLSearchParams();
+    if (email) queryParams.append('email', email);
+    if (password) queryParams.append('password', password);
+    const apiUrl = 'https://oko2sanpil.execute-api.us-east-1.amazonaws.com/test/login/users';
 
     try {
-      const response = await fetch('https://oko2sanpil.execute-api.us-east-1.amazonaws.com/test/login',{
+      const response = await fetch(`${apiUrl}?${queryParams}`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
       const result = await response.json(); 
-      const users = JSON.parse(result.body);
-      console.log('users:', users);
-      // Check if any user has the matching email
-      const emailExists = users.some(user => user.email === email);
-      console.log('emailExists:', emailExists);
-      if (emailExists) {
+      if (result.ok) {
         setErrorMessage('The email already exists');
       } else {
         // Post registration data

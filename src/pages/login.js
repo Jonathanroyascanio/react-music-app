@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -10,21 +10,31 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(''); 
+    // Create query parameters 'password' and 'email'
+    const queryParams = new URLSearchParams();
+    if (email) queryParams.append('email', email);
+    if (password) queryParams.append('password', password);
+    const apiUrl = 'https://oko2sanpil.execute-api.us-east-1.amazonaws.com/test/login/users';
     try {
-      const response = await fetch('https://oko2sanpil.execute-api.us-east-1.amazonaws.com/test/login',{
+      console.log('apiUrl:', `${apiUrl}?${queryParams}`);
+      const response = await fetch(`${apiUrl}?${queryParams}`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
       const result = await response.json(); 
-      const users = JSON.parse(result.body);
-      const user = users.find((user) => user.user_name === username && user.password === password);
-
-      if (user) {
-        localStorage.setItem('username', user.user_name);
+      console.log('result:', result);
+      if(response.ok){
+        console.log('result:', result);
+        setError(result.message);
+        localStorage.setItem('username', result.username);
         navigate('/main'); 
       }
+      else{
+        setError(result.message);
+      }
+
     } catch (error) {
       console.error('There was an error fetching the users!', error);
       setError('An error occurred while logging in');
@@ -36,11 +46,11 @@ function Login() {
       <h1 style={titleStyle}>Login</h1>
       <form onSubmit={handleSubmit} style={formStyle}>
         <label style={labelStyle}>
-          Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} style={inputStyle} />
+          Email : 
+          <input type="text" value={email} onChange={(e) => setUsername(e.target.value)} style={inputStyle} />
         </label>
         <label style={labelStyle}>
-          Password:
+          Password : 
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
         </label>
         <button type="submit" style={buttonStyle}>Login</button>
